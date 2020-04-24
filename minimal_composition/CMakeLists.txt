@@ -15,11 +15,16 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 
-include_directories(include)
+set(CMAKE_PREFIX_PATH /home/broomstick/libmacaroons/.libs:${CMAKE_PREFIX_PATH})
+set(MACAROONS_PATH /home/broomstick/libmacaroons)
+find_library(MACAROONS_LIBRARY NAMES libmacaroons macaroons PATHS /home/broomstick/libmacaroons/.libs)
+
+include_directories(include ${MACAROONS_PATH})
 
 add_library(composition_nodes SHARED
             src/publisher_node.cpp
-            src/subscriber_node.cpp)
+            src/subscriber_node.cpp
+            src/macaroon.cpp)
 target_compile_definitions(composition_nodes
   PRIVATE "MINIMAL_COMPOSITION_DLL")
 ament_target_dependencies(composition_nodes rclcpp rclcpp_components std_msgs)
@@ -33,17 +38,17 @@ if(NOT WIN32)
 endif()
 
 add_executable(composition_publisher src/standalone_publisher.cpp)
-target_link_libraries(composition_publisher composition_nodes)
+target_link_libraries(composition_publisher composition_nodes ${MACAROONS_LIBRARY})
 ament_target_dependencies(composition_publisher
   rclcpp composition_nodes)
 
 add_executable(composition_subscriber src/standalone_subscriber.cpp)
-target_link_libraries(composition_subscriber composition_nodes)
+target_link_libraries(composition_subscriber composition_nodes ${MACAROONS_LIBRARY})
 ament_target_dependencies(composition_subscriber
   rclcpp composition_nodes)
 
 add_executable(composition_composed src/composed.cpp)
-target_link_libraries(composition_composed composition_nodes)
+target_link_libraries(composition_composed composition_nodes ${MACAROONS_LIBRARY})
 ament_target_dependencies(composition_composed rclcpp class_loader)
 
 install(TARGETS

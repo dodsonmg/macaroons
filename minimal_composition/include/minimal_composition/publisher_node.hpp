@@ -19,6 +19,9 @@
 #include "std_msgs/msg/string.hpp"
 #include "minimal_composition/visibility.h"
 
+/* macaroons */
+// #include "macaroons.h"
+
 class PublisherNode : public rclcpp::Node
 {
 public:
@@ -26,6 +29,11 @@ public:
 
 private:
   void on_timer();
+  // struct macaroon* get_macaroon(const std::string location, const std::string key, const std::string identifier);
+  // std::string serialise_macaroon(struct macaroon* M);
+  // struct macaroon* deserialise_macaroon(std::string M_serialised);
+  // void print_macaroon_error(enum macaroon_returncode err);
+
   size_t count_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
