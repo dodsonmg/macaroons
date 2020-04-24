@@ -15,19 +15,21 @@ class Macaroon
 {
 public:
   MINIMAL_COMPOSITION_PUBLIC Macaroon(const std::string location, const std::string key, const std::string identifier);
-  /* TODO: Create a second contstructor that takes in a serialised constructor */
+  MINIMAL_COMPOSITION_PUBLIC Macaroon(const std::string M_serialised);
   /* TODO: Create a copy contstructor */
   /* TODO: Create a destructor */
 
   std::string serialise();
-  std::string serialise_macaroon(struct macaroon* M);
-  struct macaroon* deserialise_macaroon(std::string M_serialised);
+  int add_first_party_caveat(const std::string predicate);
+  int add_third_party_caveat(void);  // not implemented
   bool initialised();
+  void print_macaroon();
+  struct macaroon* get_macaroon_raw();
 
 private:
-  struct macaroon* create_macaroon(const std::string location, const std::string key, const std::string identifier);
+  int create_macaroon(const std::string location, const std::string key, const std::string identifier);
+  int deserialise(std::string M_serialised);
   void print_macaroon_error(enum macaroon_returncode err);
-  void print_macaroon(struct macaroon* M);
 
   struct macaroon* M_;
   std::string M_serialised_;

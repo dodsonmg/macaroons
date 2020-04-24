@@ -38,27 +38,39 @@ void PublisherNode::on_timer()
   std::string location = "https://www.example.com/" + std::to_string(count_);
   std::string key = "this is the key";
   std::string identifier = "keyid";
+  std::string predicate = "account = 3735928559";
 
   // create macaroon and serialise it
+  std::cout << "\nCreate macaroon" << std::endl;
   Macaroon M(location, key, identifier);
-  std::string M_serialised = M.serialise();
+  M.print_macaroon();
 
-  std::cout << "Created macaroon:" << std::endl;
-  std::cout << "Serialised:" << M_serialised << std::endl;
+  std::string M_serialised = M.serialise();
+  std::cout << "\nSerialise macaroon:" << M_serialised << std::endl;
+
+  // add caveat and serialise it
+  std::cout << "\nAdd caveat:" << std::endl;
+  M.add_first_party_caveat(predicate);
+  M.print_macaroon();
+
+  M_serialised = M.serialise();
+  std::cout << "\nSerialise macaroon:" << M_serialised << std::endl;
 
   // desearialise as a second macaroon
-  struct macaroon* N = M.deserialise_macaroon(M_serialised);
-  std::cout << "Deserialised macaroon:" << std::endl;
+  Macaroon N(M_serialised);
+  std::cout << "\nDeserialise macaroon" << std::endl;
 
   // create a verifier and verify
   MacaroonVerifier V;
-  int result = V.verify(N, key);
-  std::cout << "Verified macaroon:\t" << result << std::endl;
+  V.satisfy_exact(predicate);
+  
+  std::cout << "\n(GOOD) Verify macaroon" << std::endl;
+  V.verify(N, key);
 
   std::string key_bad = "this is not the key";
-  result = V.verify(N, key_bad);
-  std::cout << "Verified macaroon:\t" << result << std::endl;
-
+  std::cout << "\n(BAD) Verify macaroon" << std::endl;
+  V.verify(N, key_bad);
+  std::cout << std::endl;
 
   auto message = std_msgs::msg::String();
   message.data = "Hello, world! " + std::to_string(count_++);

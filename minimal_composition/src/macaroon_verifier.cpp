@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "minimal_composition/macaroon_verifier.hpp"
+#include "minimal_composition/macaroon.hpp"
 
 /* macaroons */
 #include "macaroons.h"
@@ -55,7 +56,7 @@ MacaroonVerifier::satisfy_general(const std::string predicate)
 }
 
 int
-MacaroonVerifier::verify(const struct macaroon* M, const std::string key){
+MacaroonVerifier::verify(Macaroon M, const std::string key){
     /*
     verifies a macaroon M against the private verifier V_
 
@@ -73,7 +74,7 @@ MacaroonVerifier::verify(const struct macaroon* M, const std::string key){
     struct macaroon** MS = NULL;
     size_t MS_sz = 0;
 
-    result = macaroon_verify(V_, M, pkey, pkey_sz, MS, MS_sz, &err);
+    result = macaroon_verify(V_, M.get_macaroon_raw(), pkey, pkey_sz, MS, MS_sz, &err);
 
     if(result != 0)
     {

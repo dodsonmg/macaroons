@@ -9,6 +9,7 @@
 #include "minimal_composition/visibility.h"
 
 /* macaroons */
+#include "minimal_composition/macaroon.hpp"
 #include "macaroons.h"
 
 class MacaroonVerifier
@@ -18,7 +19,7 @@ class MacaroonVerifier
 
     int satisfy_exact(const std::string predicate);
     int satisfy_general(const std::string predicate);
-    int verify(const struct macaroon* M, const std::string key);  // eventually this needs to take in a tree of macaroons for 3rd party verifiers
+    int verify(Macaroon M, const std::string key);  // eventually this needs to take in a tree of macaroons for 3rd party verifiers
 
   private:
     void print_verifier_error(enum macaroon_returncode err);
