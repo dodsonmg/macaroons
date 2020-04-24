@@ -173,7 +173,3 @@ Macaroon::print_macaroon(struct macaroon* M)
     macaroon_inspect(M, data, data_sz, &err);
     std::cout << data << std::endl;
 }
-
-// #include "rclcpp_components/register_node_macro.hpp"
-
-// RCLCPP_COMPONENTS_REGISTER_NODE(PublisherNode)

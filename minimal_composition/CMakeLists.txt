@@ -24,7 +24,8 @@ include_directories(include ${MACAROONS_PATH})
 add_library(composition_nodes SHARED
             src/publisher_node.cpp
             src/subscriber_node.cpp
-            src/macaroon.cpp)
+            src/macaroon.cpp
+            src/macaroon_verifier.cpp)
 target_compile_definitions(composition_nodes
   PRIVATE "MINIMAL_COMPOSITION_DLL")
 ament_target_dependencies(composition_nodes rclcpp rclcpp_components std_msgs)
