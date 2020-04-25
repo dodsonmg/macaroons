@@ -68,7 +68,7 @@ MacaroonVerifier::verify(Macaroon M){
 
     int result;
     enum macaroon_returncode err;
-    const unsigned char* pkey = (const unsigned char*)key_.c_str();  // uses private variable
+    const unsigned char* pkey = (const unsigned char*)key_.c_str();
     size_t pkey_sz = key_.size();
 
     // eventually these should be implemented

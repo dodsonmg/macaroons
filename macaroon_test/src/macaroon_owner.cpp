@@ -106,40 +106,35 @@ int main(int argc, char * argv[])
     rclcpp::executors::SingleThreadedExecutor exec;
 
     // Establish the topics for delegating a macaroon and receiving one for verification.
-    auto delegate_topic = std::string("delegate_macaroon");
-    //   auto verify_topic = std::string("verify_macaroon");
-    auto verify_topic = delegate_topic;
-
+    auto issuer_topic = std::string("issue_macaroon");
+    auto user_topic = std::string("use_macaroon");
 
     // Create and serialise a macaroon
     std::string location = "https://www.example.com/";
     std::string key = "this is the key";
     std::string identifier = "keyid";
-    std::string predicate = "account = 3735928559";
+    std::string predicate1 = "account = 3735928559";
+    std::string predicate2 = "access = read";
     Macaroon M(location, key, identifier);
-    M.add_first_party_caveat(predicate);
+    M.add_first_party_caveat(predicate1);
     std::string M_serialised = M.serialise();
 
     // Create and initialise the MacaroonVerifier
     MacaroonVerifier V(key);
-    V.satisfy_exact(predicate);
+    V.satisfy_exact(predicate1);
 
     // Create a Macaroon for the listener to use
     Macaroon M_received;
 
-    // Create a message for the delegate_node to publish (the serialised macaroon)
-    auto delegate_msg = M_serialised;
+    // Create a node for issuing a macaroon and for receiving macaroons from users.
+    auto issuer_node = std::make_shared<Talker>(issuer_topic, M_serialised);
+    // auto verifier_node = std::make_shared<Listener>(issuer_topic, &M_received);
+    auto verifier_node = std::make_shared<Listener>(user_topic, &M_received);
 
-    // Create a node for publishing a delegated macaroon and for receiving macaroons for verification.
-    auto delegate_node = std::make_shared<Talker>(delegate_topic, delegate_msg);
-    auto verify_node = std::make_shared<Listener>(delegate_topic, &M_received);
-
-    // exec.add_node(delegate_node);
-    // exec.add_node(verify_node);
     for (int i = 0; i < 5; i++)
     {
-      exec.spin_node_once(delegate_node);
-      exec.spin_node_once(verify_node);
+      exec.spin_node_once(issuer_node);
+      exec.spin_node_once(verifier_node);
 
       if(M_received.initialised())
       {
@@ -154,6 +149,31 @@ int main(int argc, char * argv[])
       std::cout << "spun..." << std::endl;
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
+
+    std::cout << std::endl << "ADDING PREDICATE FOR ACCESS LEVEL" << std::endl << std::endl;
+
+    V.satisfy_exact(predicate2);
+
+    for (int i = 0; i < 5; i++)
+    {
+      exec.spin_node_once(issuer_node);
+      exec.spin_node_once(verifier_node);
+
+      if(M_received.initialised())
+      {
+        // verify the macaroon
+        int result = V.verify(M_received);
+        if (result == 0)
+        {
+            std::cout << "Received Macaroon verified!" << std::endl;
+        }
+      }
+
+      std::cout << "spun..." << std::endl;
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+    // exec.add_node(delegate_node);
+    // exec.add_node(verify_node);    
     // exec.spin();
 
     rclcpp::shutdown();

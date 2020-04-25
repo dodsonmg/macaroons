@@ -22,6 +22,11 @@ Macaroon::Macaroon(const std::string M_serialised)
     if (result != 0) { abort(); }
 }
 
+Macaroon::Macaroon()
+{
+    M_ = NULL;
+}
+
 std::string
 Macaroon::serialise()
 {

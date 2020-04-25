@@ -56,6 +56,14 @@ add_executable(macaroon_test src/macaroon_test.cpp)
 target_link_libraries(macaroon_test composition_nodes ${MACAROONS_LIBRARY})
 ament_target_dependencies(macaroon_test rclcpp class_loader)
 
+add_executable(macaroon_owner src/macaroon_owner.cpp)
+target_link_libraries(macaroon_owner composition_nodes ${MACAROONS_LIBRARY})
+ament_target_dependencies(macaroon_owner rclcpp class_loader)
+
+add_executable(macaroon_user src/macaroon_user.cpp)
+target_link_libraries(macaroon_user composition_nodes ${MACAROONS_LIBRARY})
+ament_target_dependencies(macaroon_user rclcpp class_loader)
+
 install(TARGETS
   composition_nodes
   ARCHIVE DESTINATION lib
@@ -67,6 +75,8 @@ install(TARGETS
   composition_subscriber
   composition_composed
   macaroon_test
+  macaroon_owner
+  macaroon_user
   DESTINATION lib/${PROJECT_NAME})
 
 ament_package()
