@@ -3,8 +3,8 @@
 #include <string>
 #include <iostream>
 
-#include "minimal_composition/macaroon_verifier.hpp"
-#include "minimal_composition/macaroon.hpp"
+#include "macaroon_verifier.hpp"
+#include "macaroon.hpp"
 
 /* macaroons */
 #include "macaroons.h"

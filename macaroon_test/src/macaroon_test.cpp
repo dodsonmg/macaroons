@@ -10,8 +10,8 @@
 #include "std_msgs/msg/string.hpp"
 
 /* macaroons */
-#include "minimal_composition/macaroon.hpp"
-#include "minimal_composition/macaroon_verifier.hpp"
+#include "macaroon.hpp"
+#include "macaroon_verifier.hpp"
 
 using namespace std::chrono_literals;
 

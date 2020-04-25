@@ -6,10 +6,10 @@
 #include <string>
 
 /* copied from composition node header files */
-#include "minimal_composition/visibility.h"
+#include "visibility.h"
 
 /* macaroons */
-#include "minimal_composition/macaroon.hpp"
+#include "macaroon.hpp"
 #include "macaroons.h"
 
 class MacaroonVerifier

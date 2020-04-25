@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 
-#include "minimal_composition/macaroon.hpp"
+#include "macaroon.hpp"
 
 /* macaroons */
 #include "macaroons.h"

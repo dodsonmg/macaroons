@@ -14,19 +14,15 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(macaroons REQUIRED)
+find_library(MACAROONS_LIB macaroons)
 
-set(CMAKE_PREFIX_PATH /home/broomstick/libmacaroons/.libs:${CMAKE_PREFIX_PATH})
-set(MACAROONS_PATH /home/broomstick/libmacaroons)
-find_library(MACAROONS_LIBRARY NAMES libmacaroons macaroons PATHS /home/broomstick/libmacaroons/.libs)
-
-include_directories(include ${MACAROONS_PATH})
-
-add_library(composition_nodes SHARED
+add_library(macaroon_classes SHARED
             src/macaroon.cpp
             src/macaroon_verifier.cpp)
-target_compile_definitions(composition_nodes
+target_compile_definitions(macaroon_classes
   PRIVATE "MINIMAL_COMPOSITION_DLL")
-ament_target_dependencies(composition_nodes rclcpp rclcpp_components std_msgs)
+ament_target_dependencies(macaroon_classes rclcpp rclcpp_components std_msgs macaroons)
 
 # This package installs libraries without exporting them.
 # Export the library path to ensure that the installed libraries are available.
@@ -36,20 +32,29 @@ if(NOT WIN32)
     )
 endif()
 
+target_include_directories(macaroon_classes PRIVATE include)
+target_include_directories(macaroon_classes PRIVATE src)
+
 add_executable(macaroon_test src/macaroon_test.cpp)
-target_link_libraries(macaroon_test composition_nodes ${MACAROONS_LIBRARY})
+target_link_libraries(macaroon_test macaroon_classes ${MACAROONS_LIB})
 ament_target_dependencies(macaroon_test rclcpp class_loader)
+target_include_directories(macaroon_test PRIVATE include)
+target_include_directories(macaroon_test PRIVATE src)
 
 add_executable(macaroon_owner src/macaroon_owner.cpp)
-target_link_libraries(macaroon_owner composition_nodes ${MACAROONS_LIBRARY})
+target_link_libraries(macaroon_owner macaroon_classes ${MACAROONS_LIB})
 ament_target_dependencies(macaroon_owner rclcpp class_loader)
+target_include_directories(macaroon_owner PRIVATE include)
+target_include_directories(macaroon_owner PRIVATE src)
 
 add_executable(macaroon_user src/macaroon_user.cpp)
-target_link_libraries(macaroon_user composition_nodes ${MACAROONS_LIBRARY})
+target_link_libraries(macaroon_user macaroon_classes ${MACAROONS_LIB})
 ament_target_dependencies(macaroon_user rclcpp class_loader)
+target_include_directories(macaroon_user PRIVATE include)
+target_include_directories(macaroon_user PRIVATE src)
 
 install(TARGETS
-  composition_nodes
+  macaroon_classes
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
