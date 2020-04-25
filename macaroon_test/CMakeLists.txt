@@ -22,8 +22,6 @@ find_library(MACAROONS_LIBRARY NAMES libmacaroons macaroons PATHS /home/broomsti
 include_directories(include ${MACAROONS_PATH})
 
 add_library(composition_nodes SHARED
-            src/publisher_node.cpp
-            src/subscriber_node.cpp
             src/macaroon.cpp
             src/macaroon_verifier.cpp)
 target_compile_definitions(composition_nodes
@@ -37,20 +35,6 @@ if(NOT WIN32)
     "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}"
     )
 endif()
-
-add_executable(composition_publisher src/standalone_publisher.cpp)
-target_link_libraries(composition_publisher composition_nodes ${MACAROONS_LIBRARY})
-ament_target_dependencies(composition_publisher
-  rclcpp composition_nodes)
-
-add_executable(composition_subscriber src/standalone_subscriber.cpp)
-target_link_libraries(composition_subscriber composition_nodes ${MACAROONS_LIBRARY})
-ament_target_dependencies(composition_subscriber
-  rclcpp composition_nodes)
-
-add_executable(composition_composed src/composed.cpp)
-target_link_libraries(composition_composed composition_nodes ${MACAROONS_LIBRARY})
-ament_target_dependencies(composition_composed rclcpp class_loader)
 
 add_executable(macaroon_test src/macaroon_test.cpp)
 target_link_libraries(macaroon_test composition_nodes ${MACAROONS_LIBRARY})
@@ -71,9 +55,6 @@ install(TARGETS
   RUNTIME DESTINATION bin)
 
 install(TARGETS
-  composition_publisher
-  composition_subscriber
-  composition_composed
   macaroon_test
   macaroon_owner
   macaroon_user
